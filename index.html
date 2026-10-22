@@ -1,1 +1,820 @@
-<!doctype html><html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#090d1d"><link rel="manifest" href="manifest.webmanifest"><title>Clash Imperial</title><style>:root{--bg:#090d1d;--p:#141c38;--l:#33456d;--t:#f7f7ff;--m:#a4b0cf;--a:#9b72ff;--g:#ffd166}*{box-sizing:border-box}body{margin:0;background:radial-gradient(circle at top,#402566,#090d1d 45%);color:var(--t);font:15px system-ui,sans-serif}.app{max-width:760px;min-height:100vh;margin:auto;padding:20px 15px;display:flex;flex-direction:column}.top{display:flex;justify-content:space-between;align-items:center}.brand{display:flex;gap:10px;align-items:center}.logo{font-size:28px;background:#402a72;padding:8px 12px;border-radius:14px}.ey{font-size:10px;letter-spacing:.16em;color:#bd9cff;font-weight:bold}h1{font-size:18px;margin:3px 0}h2{font-size:clamp(30px,8vw,54px);line-height:1;margin:35px 0 15px;max-width:600px}.muted,p,small{color:var(--m);line-height:1.5}.btn{border:0;border-radius:12px;padding:14px 17px;font-weight:bold;margin:4px}.primary{background:linear-gradient(135deg,#7351e8,#c34eaf)}.secondary,.tab,.mode{background:#1a2748;border:1px solid var(--l);color:var(--t)}.modes,.stats,.grid,.heroes{display:grid;gap:10px}.modes{grid-template-columns:repeat(3,1fr);margin-top:25px}.mode{text-align:left;padding:13px;border-radius:14px}.mode b{display:block;font-size:22px}.stats{grid-template-columns:repeat(3,1fr);margin-top:20px}.card{background:#111a33e8;border:1px solid var(--l);border-radius:17px;padding:15px;margin-top:14px}.stats .card{margin:0}.stats b,.stats small{display:block}.tabs{display:flex;gap:8px;margin:15px 0}.tab{border-radius:20px;padding:8px 14px}.active{background:#714dd2!important;border-color:#b99bff!important}.grid{grid-template-columns:1.4fr .8fr}.map{min-height:230px;background:linear-gradient(135deg,#201f50,#11172d);border-radius:12px;position:relative;background-image:linear-gradient(#ffffff14 1px,transparent 1px),linear-gradient(90deg,#ffffff14 1px,transparent 1px);background-size:32px 32px}.node{position:absolute;border:2px solid #cfadff;border-radius:50%;background:#543b89;padding:17px;font-size:18px}.n1{left:15%;top:15%}.n2{left:58%;top:20%}.n3{left:30%;top:62%}.n4{left:76%;top:67%}.res{display:flex;justify-content:space-between;border-top:1px solid #293a60;padding:15px 0}.res b{color:var(--g);font-size:20px}.heroes{grid-template-columns:repeat(5,1fr)}.hero{background:#0b1227;border:1px solid #2e4068;border-radius:10px;padding:8px}.hero b,.hero strong,.hero small{display:block}.hero b{font-size:22px}.hero strong{font-size:12px}.hero small{font-size:9px}.hide{display:none}footer{margin-top:auto;text-align:center;padding-top:35px;color:#71809f;font-size:12px}@media(max-width:600px){.modes,.grid{grid-template-columns:1fr}.mode{display:flex;align-items:center;gap:10px}.mode small{margin-left:auto}.heroes{grid-template-columns:repeat(2,1fr)}.hero:last-child{grid-column:span 2}}</style></head><body><main class="app"><header class="top"><div class="brand"><span class="logo">⚔</span><div><span class="ey">IMPERIAL COMMAND</span><h1>CLASH IMPERIAL</h1></div></div><span>🟢 ONLINE</span></header><section id="menu"><span class="ey">ALDEA · ARENA · CONQUISTA</span><h2>Construye tu aldea. Domina la arena.</h2><p>Reúne recursos, mejora tus cartas y haz crecer tu imperio.</p><button class="btn primary" onclick="start()">Entrar en la aldea →</button><button class="btn secondary" onclick="continueGame()">Continuar imperio</button><div class="modes"><button class="mode" onclick="start('village')"><b>🏰</b><strong>Aldea</strong><small>Construye y mejora</small></button><button class="mode" onclick="start('arena')"><b>🃏</b><strong>Arena de cartas</strong><small>Duelo estratégico</small></button><button class="mode" onclick="start('attack')"><b>⚔</b><strong>Ataque a base</strong><small>Despliega tropas</small></button></div><div class="stats"><div class="card"><b id="sl">Aldea 1</b><small>nivel</small></div><div class="card"><b id="sm">0</b><small>partidas</small></div><div class="card"><b>5 + 1</b><small>cartas</small></div></div></section><section id="game" class="hide"><div style="display:flex;justify-content:space-between;align-items:center"><div><span class="ey">IMPERIO ACTIVO</span><h2 id="title">Tu aldea</h2></div><button class="btn secondary" onclick="goMenu()">⌂</button></div><div class="tabs"><button class="tab active" onclick="setMode('village',this)">Aldea</button><button class="tab" onclick="setMode('arena',this)">Arena</button><button class="tab" onclick="setMode('attack',this)">Ataque</button></div><div class="grid"><article class="card"><div class="ey">MAPA IMPERIAL</div><div class="map"><button class="node n1">🏰</button><button class="node n2">⛏</button><button class="node n3">⚔</button><button class="node n4">✦</button></div><p id="zone">Selecciona una construcción</p></article><article class="card"><b>Recursos</b><div class="res">🪙 Oro <b id="gold">500</b></div><div class="res">💧 Elixir <b id="elixir">300</b></div><div class="res">⭐ Gloria <b id="glory">0</b></div></article></div><article class="card"><b>Héroes legendarios</b><div class="heroes"><div class="hero"><b>🔥</b><strong>Ignar</strong><small>Llamas</small></div><div class="hero"><b>🏹</b><strong>Sylva</strong><small>Viento</small></div><div class="hero"><b>⏳</b><strong>Kael</strong><small>Despierto</small></div><div class="hero"><b>🚀</b><strong>Volt-9</strong><small>Génio</small></div><div class="hero"><b>⚡</b><strong>Thordak</strong><small>Trueno</small></div></div></article><article class="card"><b>Decisión de la aldea</b><p>Decide cómo crecerá tu imperio. Cada 3 partidas suben la aldea y tus cartas.</p><button class="btn secondary" onclick="decide('build')">Construir</button><button class="btn primary" onclick="decide('train')">Entrenar tropas</button></article><button class="btn secondary" onclick="save()">Guardar progreso</button></section><footer>Funciona sin conexión · Datos guardados en este dispositivo</footer></main><script>let s=JSON.parse(localStorage.ci||'null')||{matches:0,level:1,gold:500,elixir:300,glory:0};const $=x=>document.querySelector(x);function render(){$('#sl').textContent='Aldea '+s.level;$('#sm').textContent=s.matches;$('#gold').textContent=s.gold;$('#elixir').textContent=s.elixir;$('#glory').textContent=s.glory}function save(){localStorage.ci=JSON.stringify(s);render();alert('Progreso guardado')}function start(m='village'){$('#menu').classList.add('hide');$('#game').classList.remove('hide');setMode(m)}function continueGame(){start()}function goMenu(){$('#game').classList.add('hide');$('#menu').classList.remove('hide')}function setMode(m,b){$('#title').textContent=m==='village'?'Tu aldea':m==='arena'?'Arena imperial':'Ataque a base';if(b){document.querySelectorAll('.tab').forEach(x=>x.classList.remove('active'));b.classList.add('active')}}function decide(m){s.matches++;m==='build'?s.gold-=100:s.elixir-=60;s.glory+=m==='build'?15:20;if(s.matches%3===0)s.level++;save()}render();const units=[['🔥','Ignar',4],['🏹','Sylva',3],['⏳','Kael',5],['🚀','Volt-9',6],['⚡','Thordak',7]];let chosen=0;let ci=JSON.parse(localStorage.getItem('ci2')||'null')||{gold:500,elixir:300,glory:0,level:1,wins:0,buildings:[]};const gameRoot=document.querySelector('#game');if(gameRoot){gameRoot.insertAdjacentHTML('beforeend',"<article class='card' id='imperialPlay'><div class='card-title'><b>Construcciones y tropas</b><small>Elige qué crear y desplegar</small></div><div id='buildArea'><button class='btn secondary' onclick='buildImperial(0)'>🏹 Crear torre · 150 oro</button><button class='btn secondary' onclick='buildImperial(1)'>⛏ Crear mina · 120 oro</button><button class='btn secondary' onclick='buildImperial(2)'>⚔ Crear cuartel · 180 oro</button></div><div class='card-title' style='margin-top:14px'><b>Mazo de batalla</b><small>Selecciona una tropa</small></div><div id='troopArea' style='display:grid;grid-template-columns:repeat(5,1fr);gap:6px'></div><div id='deployArea' class='notice'>Tropa seleccionada: Ignar. Pulsa un carril para desplegarla.</div><button class='btn primary' onclick='finishImperialBattle()'>⚔ Terminar batalla</button></article>" );}function renderImperial(){let b=document.querySelector('#buildArea');if(b)b.innerHTML=[['🏹 Torre de arqueras',150],['⛏ Mina de oro',120],['⚔ Cuartel',180]].map((x,i)=>ci.buildings.includes(i)?'<span class="notice">✅ '+x[0]+'</span>':'<button class="btn secondary" onclick="buildImperial('+i+')">'+x[0]+' · '+x[1]+' oro</button>').join('');let t=document.querySelector('#troopArea');if(t)t.innerHTML=units.map((x,i)=>'<button class="btn '+(i===chosen?'primary':'secondary')+'" onclick="chooseTroop('+i+')">'+x[0]+'<br><small>'+x[1]+' · '+x[2]+'⚡</small></button>').join('');}function buildImperial(i){let costs=[150,120,180];if(ci.buildings.includes(i))return;if(ci.gold<costs[i]){alert('Necesitas más oro');return}ci.gold-=costs[i];ci.buildings.push(i);localStorage.setItem('ci2',JSON.stringify(ci));renderImperial();alert('Construcción creada en tu aldea');}function chooseTroop(i){chosen=i;renderImperial();let d=document.querySelector('#deployArea');if(d)d.innerHTML='Has elegido '+units[i][0]+' '+units[i][1]+'. Pulsa un carril para desplegarla.';}function finishImperialBattle(){ci.wins++;ci.glory+=25;ci.elixir=Math.min(10,ci.elixir+3);if(ci.wins%3===0){ci.level++;alert('¡Victoria! Tu aldea y tus cartas suben de nivel.')}else alert('¡Victoria imperial!');localStorage.setItem('ci2',JSON.stringify(ci));renderImperial();}if('serviceWorker' in navigator)navigator.serviceWorker.register('sw.js?v=2');renderImperial();</script></body></html>
+<html lang="es"><head>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Clash Imperial">
+<meta name="theme-color" content="#1a1a2e">
+<title>Clash Imperial</title>
+<link rel="manifest" href="/manifest.webmanifest">
+<link rel="apple-touch-icon" href="data:image/svg+xml;utf8,&lt;svg xmlns=&quot;http://www.w3.org/2000/svg&quot; viewBox=&quot;0 0 100 100&quot;&gt;&lt;rect width=&quot;100&quot; height=&quot;100&quot; fill=&quot;%231a1a2e&quot;/&gt;&lt;text x=&quot;50&quot; y=&quot;65&quot; font-size=&quot;50&quot; text-anchor=&quot;middle&quot; fill=&quot;gold&quot;&gt;⚔&lt;/text&gt;&lt;/svg&gt;">
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; user-select: none; -webkit-user-select: none; }
+html, body { width: 100%; height: 100%; overflow: hidden; background: #1a1a2e; font-family: -apple-system, BlinkMacSystemFont, sans-serif; color: white; touch-action: none; }
+#game { position: fixed; inset: 0; display: flex; flex-direction: column; }
+.screen { position: absolute; inset: 0; display: none; flex-direction: column; }
+.screen.active { display: flex; }
+
+/* MENÚ PRINCIPAL */
+#menu { background: linear-gradient(180deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%); align-items: center; justify-content: space-between; padding: 20px; padding-top: calc(20px + env(safe-area-inset-top)); padding-bottom: calc(20px + env(safe-area-inset-bottom)); }
+.title { font-size: 42px; font-weight: 900; background: linear-gradient(180deg, #ffd700 0%, #ff8c00 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; text-shadow: 0 4px 20px rgba(255,215,0,0.3); letter-spacing: 2px; text-align: center; margin-top: 20px; }
+.subtitle { font-size: 14px; color: #aaa; margin-top: 5px; letter-spacing: 4px; }
+.stats { background: rgba(255,255,255,0.05); border: 1px solid rgba(255,215,0,0.3); border-radius: 15px; padding: 15px 25px; margin: 20px 0; text-align: center; width: 100%; max-width: 350px; }
+.stats-row { display: flex; justify-content: space-around; margin: 8px 0; }
+.stat-item { text-align: center; }
+.stat-value { font-size: 24px; font-weight: bold; color: #ffd700; }
+.stat-label { font-size: 11px; color: #aaa; text-transform: uppercase; }
+.heroes-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 8px; width: 100%; max-width: 400px; margin: 10px 0; }
+.hero-card { aspect-ratio: 1; background: linear-gradient(135deg, #2a2a4e, #1a1a3e); border: 2px solid #ffd700; border-radius: 10px; display: flex; flex-direction: column; align-items: center; justify-content: center; font-size: 30px; position: relative; }
+.hero-card .hero-lvl { position: absolute; bottom: 2px; right: 4px; font-size: 10px; color: #ffd700; font-weight: bold; }
+.hero-card .hero-name { font-size: 8px; color: #ccc; margin-top: 2px; text-align: center; }
+.btn { background: linear-gradient(180deg, #ffd700 0%, #ff8c00 100%); color: #1a1a2e; border: none; padding: 18px 40px; font-size: 20px; font-weight: 900; border-radius: 15px; letter-spacing: 2px; box-shadow: 0 5px 20px rgba(255,215,0,0.4), inset 0 -3px 0 rgba(0,0,0,0.2); cursor: pointer; width: 100%; max-width: 300px; margin-top: 10px; }
+.btn:active { transform: translateY(2px); box-shadow: 0 3px 10px rgba(255,215,0,0.4); }
+.btn-secondary { background: linear-gradient(180deg, #4a4a6e, #2a2a4e); color: white; }
+
+/* BATALLA */
+#battle { background: #2d5016; }
+#battleCanvas { flex: 1; display: block; width: 100%; touch-action: none; }
+.battle-ui { position: absolute; left: 0; right: 0; pointer-events: none; }
+.top-bar { top: 0; padding: calc(10px + env(safe-area-inset-top)) 15px 10px; background: linear-gradient(180deg, rgba(0,0,0,0.7), transparent); display: flex; justify-content: space-between; align-items: center; font-weight: bold; }
+.timer { font-size: 24px; color: #fff; text-shadow: 0 2px 4px rgba(0,0,0,0.8); }
+.crown-count { display: flex; gap: 5px; align-items: center; }
+.crown { font-size: 20px; opacity: 0.3; }
+.crown.won { opacity: 1; }
+.bottom-bar { bottom: 0; padding: 10px 10px calc(10px + env(safe-area-inset-bottom)); background: linear-gradient(0deg, rgba(0,0,0,0.9), rgba(0,0,0,0.6), transparent); pointer-events: auto; }
+.elixir-bar { display: flex; align-items: center; gap: 8px; margin-bottom: 10px; }
+.elixir-icon { font-size: 24px; }
+.elixir-track { flex: 1; height: 20px; background: rgba(0,0,0,0.5); border: 2px solid #8b00ff; border-radius: 10px; overflow: hidden; position: relative; }
+.elixir-fill { height: 100%; background: linear-gradient(90deg, #8b00ff, #d020ff); transition: width 0.1s; }
+.elixir-text { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 14px; text-shadow: 0 1px 2px black; }
+.cards-hand { display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; }
+.card { background: linear-gradient(180deg, #3a3a5e, #1a1a3e); border: 2px solid #ffd700; border-radius: 10px; padding: 6px 4px; text-align: center; position: relative; cursor: pointer; transition: transform 0.1s; }
+.card.selected { transform: translateY(-8px); border-color: #00ff88; box-shadow: 0 0 15px #00ff88; }
+.card.disabled { opacity: 0.4; filter: grayscale(1); }
+.card-emoji { font-size: 28px; }
+.card-name { font-size: 9px; color: #fff; margin-top: 2px; white-space: nowrap; overflow: hidden; }
+.card-cost { position: absolute; top: -6px; left: -6px; width: 22px; height: 22px; background: linear-gradient(135deg, #d020ff, #8b00ff); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: bold; border: 2px solid white; }
+.next-card { display: flex; align-items: center; gap: 5px; margin-bottom: 8px; font-size: 11px; color: #aaa; }
+.next-card-preview { width: 35px; height: 35px; background: #2a2a4e; border: 1px solid #ffd700; border-radius: 6px; display: flex; align-items: center; justify-content: center; font-size: 20px; }
+
+/* RESULTADO */
+#result { background: rgba(0,0,0,0.9); align-items: center; justify-content: center; text-align: center; padding: 30px; }
+.result-title { font-size: 50px; font-weight: 900; margin-bottom: 20px; }
+.result-title.win { color: #ffd700; text-shadow: 0 0 30px #ffd700; }
+.result-title.lose { color: #ff4444; text-shadow: 0 0 30px #ff4444; }
+.result-info { font-size: 16px; color: #ccc; margin: 10px 0; }
+.levelup { background: linear-gradient(135deg, #ffd700, #ff8c00); color: #1a1a2e; padding: 15px 25px; border-radius: 15px; font-weight: bold; margin: 20px 0; animation: pulse 1s infinite; }
+@keyframes pulse { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.05); } }
+
+/* DEPLOY INDICATOR */
+.deploy-zone { position: absolute; bottom: 200px; left: 10px; right: 10px; height: 2px; background: rgba(0,255,136,0.5); pointer-events: none; display: none; }
+</style>
+</head>
+<body>
+<div id="game">
+
+<!-- MENÚ PRINCIPAL -->
+<div id="menu" class="screen active">
+  <div>
+    <div class="title">CLASH<br>IMPERIAL</div>
+    <div class="subtitle">⚔ BATALLA ÉPICA ⚔</div>
+  </div>
+  
+  <div class="stats">
+    <div style="font-size:12px; color:#ffd700; letter-spacing:2px; margin-bottom:8px;">TU IMPERIO</div>
+    <div class="stats-row">
+      <div class="stat-item">
+        <div class="stat-value" id="villageLevel">1</div>
+        <div class="stat-label">Aldea</div>
+      </div>
+      <div class="stat-item">
+        <div class="stat-value" id="trophies">0</div>
+        <div class="stat-label">Trofeos</div>
+      </div>
+      <div class="stat-item">
+        <div class="stat-value" id="matches">0</div>
+        <div class="stat-label">Batallas</div>
+      </div>
+    </div>
+    <div style="font-size:11px; color:#aaa; margin-top:8px;">
+      Próxima mejora aldea en <span id="nextLevel" style="color:#ffd700;">3</span> batallas
+    </div>
+  </div>
+  
+  <div class="heroes-grid" id="heroesGrid"></div>
+  
+  <button class="btn" onclick="startBattle()">⚔ BATALLAR ⚔</button>
+  <button class="btn btn-secondary" onclick="resetGame()" style="font-size:12px; padding:10px;">Reiniciar progreso</button>
+</div>
+
+<!-- BATALLA -->
+<div id="battle" class="screen">
+  <canvas id="battleCanvas"></canvas>
+  
+  <div class="battle-ui top-bar">
+    <div class="crown-count" id="enemyCrowns">
+      <span class="crown">👑</span><span class="crown">👑</span><span class="crown">👑</span>
+    </div>
+    <div class="timer" id="timer">3:00</div>
+    <div class="crown-count" id="playerCrowns">
+      <span class="crown">👑</span><span class="crown">👑</span><span class="crown">👑</span>
+    </div>
+  </div>
+  
+  <div class="battle-ui bottom-bar">
+    <div class="next-card">
+      <span>SIGUIENTE:</span>
+      <div class="next-card-preview" id="nextCardPreview">?</div>
+    </div>
+    <div class="elixir-bar">
+      <div class="elixir-icon">💧</div>
+      <div class="elixir-track">
+        <div class="elixir-fill" id="elixirFill" style="width:50%"></div>
+        <div class="elixir-text" id="elixirText">5/10</div>
+      </div>
+    </div>
+    <div class="cards-hand" id="cardsHand"></div>
+  </div>
+</div>
+
+<!-- RESULTADO -->
+<div id="result" class="screen">
+  <div class="result-title" id="resultTitle">VICTORIA</div>
+  <div class="result-info" id="resultInfo"></div>
+  <div class="levelup" id="levelUpMsg" style="display:none;">¡ALDEA MEJORADA!</div>
+  <button class="btn" onclick="backToMenu()">CONTINUAR</button>
+</div>
+
+</div>
+
+<script>
+// ============ DATOS DE HÉROES ============
+const HEROES = [
+  { id:'ignar', name:'Ignar', emoji:'🔥', color:'#ff4500', cost:5, hp:1200, dmg:150, speed:1.2, range:90, atkSpeed:1.0, type:'mage', ability:'lava', desc:'Señor de las Llamas' },
+  { id:'sylva', name:'Sylva', emoji:'🏹', color:'#32cd32', cost:3, hp:600, dmg:100, speed:1.5, range:130, atkSpeed:0.8, type:'archer', ability:'pierce', desc:'Ojo del Viento' },
+  { id:'kael', name:'Kael', emoji:'🌀', color:'#00bfff', cost:5, hp:900, dmg:120, speed:2.0, range:50, atkSpeed:0.6, type:'assassin', ability:'dodge', desc:'El Despierto' },
+  { id:'volt9', name:'Volt-9', emoji:'🚀', color:'#ff1493', cost:6, hp:1500, dmg:180, speed:1.3, range:100, atkSpeed:0.9, type:'tech', ability:'fly', desc:'Armadura del Génio' },
+  { id:'thordak', name:'Thordak', emoji:'⚡', color:'#ffd700', cost:6, hp:2000, dmg:200, speed:0.9, range:70, atkSpeed:1.2, type:'thunder', ability:'lightning', desc:'Martillo del Cielo' }
+];
+
+// ============ ESTADO DEL JUEGO ============
+let state = {
+  villageLevel: 1,
+  trophies: 0,
+  matches: 0,
+  heroLevels: { ignar:1, sylva:1, kael:1, volt9:1, thordak:1 }
+};
+
+// Cargar progreso
+const saved = localStorage.getItem('clashImperial');
+if (saved) state = JSON.parse(saved);
+
+function save() { localStorage.setItem('clashImperial', JSON.stringify(state)); }
+
+// ============ MENÚ ============
+function updateMenu() {
+  document.getElementById('villageLevel').textContent = state.villageLevel;
+  document.getElementById('trophies').textContent = state.trophies;
+  document.getElementById('matches').textContent = state.matches;
+  document.getElementById('nextLevel').textContent = 3 - (state.matches % 3);
+  
+  const grid = document.getElementById('heroesGrid');
+  grid.innerHTML = '';
+  HEROES.forEach(h => {
+    const card = document.createElement('div');
+    card.className = 'hero-card';
+    card.style.borderColor = h.color;
+    card.innerHTML = `<div style="font-size:30px">${h.emoji}</div><div class="hero-name">${h.name}</div><div class="hero-lvl">Nv.${state.heroLevels[h.id]}</div>`;
+    grid.appendChild(card);
+  });
+}
+
+function resetGame() {
+  if (confirm('¿Reiniciar todo el progreso?')) {
+    state = { villageLevel:1, trophies:0, matches:0, heroLevels:{ignar:1,sylva:1,kael:1,volt9:1,thordak:1} };
+    save(); updateMenu();
+  }
+}
+
+// ============ BATALLA ============
+let canvas, ctx;
+let battle = null;
+
+function startBattle() {
+  document.getElementById('menu').classList.remove('active');
+  document.getElementById('battle').classList.add('active');
+  
+  canvas = document.getElementById('battleCanvas');
+  ctx = canvas.getContext('2d');
+  resizeCanvas();
+  
+  initBattle();
+  requestAnimationFrame(gameLoop);
+}
+
+function resizeCanvas() {
+  canvas.width = canvas.clientWidth * window.devicePixelRatio;
+  canvas.height = canvas.clientHeight * window.devicePixelRatio;
+  ctx.scale(window.devicePixelRatio, window.devicePixelRatio);
+}
+
+window.addEventListener('resize', () => { if (canvas) resizeCanvas(); });
+
+function initBattle() {
+  const W = canvas.clientWidth;
+  const H = canvas.clientHeight;
+  
+  // Seleccionar 4 cartas aleatorias de los 5 héroes
+  const shuffled = [...HEROES].sort(() => Math.random() - 0.5);
+  const hand = shuffled.slice(0, 4);
+  const next = shuffled[4];
+  
+  battle = {
+    W, H,
+    time: 180,
+    elixir: 5,
+    maxElixir: 10,
+    hand: hand,
+    next: next,
+    selectedIndex: -1,
+    units: [],
+    towers: [],
+    projectiles: [],
+    effects: [],
+    playerCrowns: 0,
+    enemyCrowns: 0,
+    lastTime: performance.now(),
+    elixirAcc: 0,
+    enemySpawnTimer: 5,
+    ended: false
+  };
+  
+  // Torres (3 por cada lado)
+  const towerHP = 1500 + state.villageLevel * 200;
+  const kingHP = 2500 + state.villageLevel * 300;
+  
+  // Torres enemigas (arriba)
+  battle.towers.push({ x: W*0.25, y: H*0.15, r: 28, hp: towerHP, maxHp: towerHP, team:'enemy', type:'princess', atkTimer:0 });
+  battle.towers.push({ x: W*0.75, y: H*0.15, r: 28, hp: towerHP, maxHp: towerHP, team:'enemy', type:'princess', atkTimer:0 });
+  battle.towers.push({ x: W*0.5, y: H*0.08, r: 35, hp: kingHP, maxHp: kingHP, team:'enemy', type:'king', atkTimer:0 });
+  
+  // Torres aliadas (abajo)
+  battle.towers.push({ x: W*0.25, y: H*0.75, r: 28, hp: towerHP, maxHp: towerHP, team:'player', type:'princess', atkTimer:0 });
+  battle.towers.push({ x: W*0.75, y: H*0.75, r: 28, hp: towerHP, maxHp: towerHP, team:'player', type:'princess', atkTimer:0 });
+  battle.towers.push({ x: W*0.5, y: H*0.85, r: 35, hp: kingHP, maxHp: kingHP, team:'player', type:'king', atkTimer:0 });
+  
+  renderHand();
+  updateElixir();
+  updateCrowns();
+}
+
+function renderHand() {
+  const hand = document.getElementById('cardsHand');
+  hand.innerHTML = '';
+  battle.hand.forEach((h, i) => {
+    const card = document.createElement('div');
+    card.className = 'card';
+    card.dataset.index = i;
+    const lvl = state.heroLevels[h.id];
+    card.innerHTML = `<div class="card-cost">${h.cost}</div><div class="card-emoji">${h.emoji}</div><div class="card-name">${h.name} Nv${lvl}</div>`;
+    card.onclick = () => selectCard(i);
+    hand.appendChild(card);
+  });
+  document.getElementById('nextCardPreview').textContent = battle.next.emoji;
+}
+
+function selectCard(i) {
+  const card = battle.hand[i];
+  if (battle.elixir < card.cost) return;
+  
+  battle.selectedIndex = battle.selectedIndex === i ? -1 : i;
+  document.querySelectorAll('.card').forEach((c, idx) => {
+    c.classList.toggle('selected', idx === battle.selectedIndex);
+    c.classList.toggle('disabled', battle.elixir < battle.hand[idx].cost);
+  });
+}
+
+function updateElixir() {
+  const pct = (battle.elixir / battle.maxElixir) * 100;
+  document.getElementById('elixirFill').style.width = pct + '%';
+  document.getElementById('elixirText').textContent = Math.floor(battle.elixir) + '/' + battle.maxElixir;
+  
+  document.querySelectorAll('.card').forEach((c, idx) => {
+    c.classList.toggle('disabled', battle.elixir < battle.hand[idx].cost);
+  });
+}
+
+function updateCrowns() {
+  const pc = document.getElementById('playerCrowns').children;
+  const ec = document.getElementById('enemyCrowns').children;
+  for (let i = 0; i < 3; i++) {
+    pc[i].classList.toggle('won', i < battle.playerCrowns);
+    ec[i].classList.toggle('won', i < battle.enemyCrowns);
+  }
+}
+
+// ============ INPUT TÁCTIL ============
+canvas.addEventListener('pointerdown', (e) => {
+  if (battle.selectedIndex < 0 || battle.ended) return;
+  
+  const rect = canvas.getBoundingClientRect();
+  const x = e.clientX - rect.left;
+  const y = e.clientY - rect.top;
+  
+  // Solo puede desplegar en su mitad del campo
+  if (y < battle.H * 0.5) return;
+  
+  deployCard(battle.selectedIndex, x, y);
+});
+
+function deployCard(index, x, y) {
+  const hero = battle.hand[index];
+  if (battle.elixir < hero.cost) return;
+  
+  battle.elixir -= hero.cost;
+  
+  const lvl = state.heroLevels[hero.id];
+  const unit = {
+    x, y,
+    hp: hero.hp * (1 + (lvl-1)*0.1),
+    maxHp: hero.hp * (1 + (lvl-1)*0.1),
+    dmg: hero.dmg * (1 + (lvl-1)*0.1),
+    speed: hero.speed,
+    range: hero.range,
+    atkSpeed: hero.atkSpeed,
+    atkTimer: 0,
+    team: 'player',
+    hero: hero,
+    target: null,
+    abilityTimer: 0,
+    r: 15
+  };
+  
+  battle.units.push(unit);
+  
+  // Efecto de despliegue según habilidad
+  if (hero.ability === 'lightning') {
+    battle.effects.push({ type:'lightning', x, y, time:0.5 });
+    // Daño inicial al desplegar
+    battle.units.forEach(u => {
+      if (u.team === 'enemy' && dist(u, {x,y}) < 80) {
+        u.hp -= 100;
+      }
+    });
+  } else if (hero.ability === 'lava') {
+    battle.effects.push({ type:'lava', x, y, time:4, r:50 });
+  }
+  
+  // Rotar cartas
+  battle.hand[index] = battle.next;
+  battle.next = hero;
+  battle.selectedIndex = -1;
+  renderHand();
+  updateElixir();
+}
+
+// ============ IA ENEMIGA ============
+function enemyAI(dt) {
+  battle.enemySpawnTimer -= dt;
+  if (battle.enemySpawnTimer <= 0) {
+    battle.enemySpawnTimer = 4 + Math.random() * 3;
+    
+    // El enemigo elige un héroe aleatorio
+    const hero = HEROES[Math.floor(Math.random() * HEROES.length)];
+    const side = Math.random() < 0.5 ? 0.3 : 0.7;
+    const x = battle.W * side;
+    const y = battle.H * (0.2 + Math.random() * 0.2);
+    
+    const enemyLevel = Math.min(14, state.villageLevel + Math.floor(Math.random()*3));
+    
+    battle.units.push({
+      x, y,
+      hp: hero.hp * (1 + (enemyLevel-1)*0.1),
+      maxHp: hero.hp * (1 + (enemyLevel-1)*0.1),
+      dmg: hero.dmg * (1 + (enemyLevel-1)*0.1),
+      speed: hero.speed,
+      range: hero.range,
+      atkSpeed: hero.atkSpeed,
+      atkTimer: 0,
+      team: 'enemy',
+      hero: hero,
+      target: null,
+      r: 15
+    });
+  }
+}
+
+// ============ LÓGICA ============
+function dist(a, b) {
+  const dx = a.x - b.x, dy = a.y - b.y;
+  return Math.sqrt(dx*dx + dy*dy);
+}
+
+function findTarget(unit) {
+  let best = null, bestD = Infinity;
+  
+  // Buscar torres enemigas
+  battle.towers.forEach(t => {
+    if (t.team !== unit.team && t.hp > 0) {
+      const d = dist(unit, t);
+      if (d < bestD) { bestD = d; best = t; }
+    }
+  });
+  
+  // Buscar unidades enemigas cercanas (solo si están muy cerca)
+  battle.units.forEach(u => {
+    if (u.team !== unit.team && u.hp > 0) {
+      const d = dist(unit, u);
+      if (d < bestD * 0.6) { bestD = d; best = u; }
+    }
+  });
+  
+  return best;
+}
+
+function updateUnits(dt) {
+  battle.units.forEach(u => {
+    if (u.hp <= 0) return;
+    
+    // Efectos de zona (lava)
+    battle.effects.forEach(e => {
+      if (e.type === 'lava' && dist(u, e) < e.r) {
+        if (u.team === 'enemy') u.hp -= 30 * dt;
+      }
+    });
+    
+    if (!u.target || u.target.hp <= 0) {
+      u.target = findTarget(u);
+    }
+    
+    if (!u.target) return;
+    
+    const d = dist(u, u.target);
+    
+    if (d <= u.range + (u.target.r || 0)) {
+      // Atacar
+      u.atkTimer -= dt;
+      if (u.atkTimer <= 0) {
+        u.atkTimer = u.atkSpeed;
+        
+        let dmg = u.dmg;
+        
+        // Habilidades especiales
+        if (u.hero.ability === 'pierce' && Math.random() < 0.2) dmg *= 2;
+        if (u.hero.ability === 'dodge') {
+          // Kael esquiva - no aplica al atacar, solo al recibir
+        }
+        
+        u.target.hp -= dmg;
+        
+        // Proyectil visual
+        battle.projectiles.push({
+          x: u.x, y: u.y,
+          tx: u.target.x, ty: u.target.y,
+          color: u.hero.color,
+          time: 0.2
+        });
+        
+        // Rayo de Thordak cada 4 ataques
+        if (u.hero.ability === 'lightning' && Math.random() < 0.25) {
+          battle.effects.push({ type:'lightning', x:u.target.x, y:u.target.y, time:0.3 });
+          u.target.hp -= dmg * 0.5;
+        }
+      }
+    } else {
+      // Mover hacia el objetivo
+      const dx = u.target.x - u.x;
+      const dy = u.target.y - u.y;
+      const len = Math.sqrt(dx*dx + dy*dy);
+      u.x += (dx/len) * u.speed * 60 * dt;
+      u.y += (dy/len) * u.speed * 60 * dt;
+    }
+    
+    // Habilidad de Kael: esquiva (se teletransporta si le disparan)
+    if (u.hero.ability === 'dodge' && Math.random() < 0.005) {
+      u.x += (Math.random() - 0.5) * 40;
+      u.y += (Math.random() - 0.5) * 40;
+    }
+  });
+  
+  // Eliminar muertos
+  battle.units = battle.units.filter(u => u.hp > 0);
+}
+
+function updateTowers(dt) {
+  battle.towers.forEach(t => {
+    if (t.hp <= 0) return;
+    
+    t.atkTimer -= dt;
+    if (t.atkTimer > 0) return;
+    
+    // Buscar objetivo
+    let target = null, bestD = 150;
+    battle.units.forEach(u => {
+      if (u.team !== t.team && u.hp > 0) {
+        const d = dist(t, u);
+        if (d < bestD) { bestD = d; target = u; }
+      }
+    });
+    
+    if (target) {
+      t.atkTimer = 1.0;
+      target.hp -= 80;
+      battle.projectiles.push({
+        x: t.x, y: t.y,
+        tx: target.x, ty: target.y,
+        color: t.team === 'player' ? '#4488ff' : '#ff4444',
+        time: 0.3
+      });
+    }
+  });
+  
+  // Contar coronas
+  const enemyTowers = battle.towers.filter(t => t.team === 'enemy');
+  const playerTowers = battle.towers.filter(t => t.team === 'player');
+  
+  const enemyDead = enemyTowers.filter(t => t.hp <= 0).length;
+  const playerDead = playerTowers.filter(t => t.hp <= 0).length;
+  
+  const oldPC = battle.playerCrowns, oldEC = battle.enemyCrowns;
+  battle.playerCrowns = Math.min(3, enemyDead);
+  battle.enemyCrowns = Math.min(3, playerDead);
+  
+  if (battle.playerCrowns !== oldPC || battle.enemyCrowns !== oldEC) updateCrowns();
+  
+  // Rey muerto = 3 coronas
+  if (enemyTowers[2].hp <= 0) battle.playerCrowns = 3;
+  if (playerTowers[2].hp <= 0) battle.enemyCrowns = 3;
+}
+
+function updateEffects(dt) {
+  battle.effects.forEach(e => e.time -= dt);
+  battle.effects = battle.effects.filter(e => e.time > 0);
+  
+  battle.projectiles.forEach(p => p.time -= dt);
+  battle.projectiles = battle.projectiles.filter(p => p.time > 0);
+}
+
+// ============ RENDER ============
+function render() {
+  const W = battle.W, H = battle.H;
+  
+  // Fondo arena
+  ctx.fillStyle = '#2d5016';
+  ctx.fillRect(0, 0, W, H);
+  
+  // Línea divisoria
+  ctx.strokeStyle = 'rgba(255,255,255,0.3)';
+  ctx.lineWidth = 2;
+  ctx.setLineDash([10, 10]);
+  ctx.beginPath();
+  ctx.moveTo(0, H*0.5);
+  ctx.lineTo(W, H*0.5);
+  ctx.stroke();
+  ctx.setLineDash([]);
+  
+  // Ríos laterales
+  ctx.fillStyle = 'rgba(30, 100, 200, 0.4)';
+  ctx.fillRect(0, H*0.45, W*0.15, H*0.1);
+  ctx.fillRect(W*0.85, H*0.45, W*0.15, H*0.1);
+  
+  // Puentes
+  ctx.fillStyle = '#8b4513';
+  ctx.fillRect(W*0.2, H*0.45, W*0.1, H*0.1);
+  ctx.fillRect(W*0.7, H*0.45, W*0.1, H*0.1);
+  
+  // Efectos (lava, rayos)
+  battle.effects.forEach(e => {
+    if (e.type === 'lava') {
+      const alpha = Math.min(1, e.time);
+      ctx.fillStyle = `rgba(255, 100, 0, ${alpha * 0.5})`;
+      ctx.beginPath();
+      ctx.arc(e.x, e.y, e.r, 0, Math.PI*2);
+      ctx.fill();
+    } else if (e.type === 'lightning') {
+      ctx.strokeStyle = `rgba(255, 255, 100, ${e.time * 2})`;
+      ctx.lineWidth = 4;
+      ctx.beginPath();
+      ctx.moveTo(e.x, e.y - 100);
+      for (let i = 0; i < 5; i++) {
+        ctx.lineTo(e.x + (Math.random()-0.5)*30, e.y - 100 + i*25);
+      }
+      ctx.lineTo(e.x, e.y);
+      ctx.stroke();
+    }
+  });
+  
+  // Torres
+  battle.towers.forEach(t => {
+    if (t.hp <= 0) {
+      // Ruinas
+      ctx.fillStyle = 'rgba(80, 80, 80, 0.5)';
+      ctx.beginPath();
+      ctx.arc(t.x, t.y, t.r * 0.7, 0, Math.PI*2);
+      ctx.fill();
+      return;
+    }
+    
+    const color = t.team === 'player' ? '#4488ff' : '#ff4444';
+    
+    // Sombra
+    ctx.fillStyle = 'rgba(0,0,0,0.3)';
+    ctx.beginPath();
+    ctx.arc(t.x, t.y + 5, t.r, 0, Math.PI*2);
+    ctx.fill();
+    
+    // Torre
+    ctx.fillStyle = color;
+    ctx.beginPath();
+    ctx.arc(t.x, t.y, t.r, 0, Math.PI*2);
+    ctx.fill();
+    
+    ctx.strokeStyle = t.type === 'king' ? '#ffd700' : '#fff';
+    ctx.lineWidth = 3;
+    ctx.stroke();
+    
+    // Icono
+    ctx.fillStyle = 'white';
+    ctx.font = `${t.r}px sans-serif`;
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    ctx.fillText(t.type === 'king' ? '👑' : '🏰', t.x, t.y);
+    
+    // Barra de vida
+    const bw = t.r * 2;
+    const bh = 5;
+    const bx = t.x - bw/2;
+    const by = t.y - t.r - 12;
+    ctx.fillStyle = 'rgba(0,0,0,0.7)';
+    ctx.fillRect(bx, by, bw, bh);
+    ctx.fillStyle = t.hp/t.maxHp > 0.5 ? '#00ff00' : t.hp/t.maxHp > 0.25 ? '#ffaa00' : '#ff0000';
+    ctx.fillRect(bx, by, bw * (t.hp/t.maxHp), bh);
+  });
+  
+  // Unidades
+  battle.units.forEach(u => {
+    // Sombra
+    ctx.fillStyle = 'rgba(0,0,0,0.3)';
+    ctx.beginPath();
+    ctx.arc(u.x, u.y + 3, u.r * 0.8, 0, Math.PI*2);
+    ctx.fill();
+    
+    // Círculo de equipo
+    ctx.fillStyle = u.team === 'player' ? '#4488ff' : '#ff4444';
+    ctx.beginPath();
+    ctx.arc(u.x, u.y, u.r, 0, Math.PI*2);
+    ctx.fill();
+    
+    // Borde del héroe
+    ctx.strokeStyle = u.hero.color;
+    ctx.lineWidth = 3;
+    ctx.stroke();
+    
+    // Emoji del héroe
+    ctx.font = `${u.r * 1.3}px sans-serif`;
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    ctx.fillText(u.hero.emoji, u.x, u.y);
+    
+    // Barra de vida
+    const bw = u.r * 2;
+    const bh = 3;
+    const bx = u.x - bw/2;
+    const by = u.y - u.r - 8;
+    ctx.fillStyle = 'rgba(0,0,0,0.7)';
+    ctx.fillRect(bx, by, bw, bh);
+    ctx.fillStyle = u.team === 'player' ? '#00ff00' : '#ff6666';
+    ctx.fillRect(bx, by, bw * (u.hp/u.maxHp), bh);
+  });
+  
+  // Proyectiles
+  battle.projectiles.forEach(p => {
+    const t = 1 - (p.time / 0.3);
+    const x = p.x + (p.tx - p.x) * t;
+    const y = p.y + (p.ty - p.y) * t;
+    ctx.fillStyle = p.color;
+    ctx.beginPath();
+    ctx.arc(x, y, 4, 0, Math.PI*2);
+    ctx.fill();
+    ctx.shadowColor = p.color;
+    ctx.shadowBlur = 10;
+    ctx.fill();
+    ctx.shadowBlur = 0;
+  });
+  
+  // Indicador de zona de despliegue si hay carta seleccionada
+  if (battle.selectedIndex >= 0) {
+    ctx.fillStyle = 'rgba(0, 255, 136, 0.1)';
+    ctx.fillRect(0, H*0.5, W, H*0.5);
+    ctx.strokeStyle = 'rgba(0, 255, 136, 0.5)';
+    ctx.lineWidth = 2;
+    ctx.setLineDash([5, 5]);
+    ctx.strokeRect(0, H*0.5, W, H*0.5);
+    ctx.setLineDash([]);
+  }
+}
+
+// ============ LOOP PRINCIPAL ============
+function gameLoop(now) {
+  if (!battle || battle.ended) return;
+  
+  const dt = Math.min(0.1, (now - battle.lastTime) / 1000);
+  battle.lastTime = now;
+  
+  // Timer
+  battle.time -= dt;
+  const mins = Math.floor(battle.time / 60);
+  const secs = Math.floor(battle.time % 60);
+  document.getElementById('timer').textContent = `${mins}:${secs.toString().padStart(2,'0')}`;
+  
+  // Elixir
+  battle.elixirAcc += dt;
+  if (battle.elixirAcc >= 0.1) {
+    battle.elixir = Math.min(battle.maxElixir, battle.elixir + 0.1 * (battle.time < 60 ? 2 : 1));
+    battle.elixirAcc = 0;
+    updateElixir();
+  }
+  
+  // IA enemiga
+  enemyAI(dt);
+  
+  // Actualizar
+  updateUnits(dt);
+  updateTowers(dt);
+  updateEffects(dt);
+  
+  // Render
+  render();
+  
+  // Comprobar fin
+  if (battle.time <= 0 || battle.playerCrowns === 3 || battle.enemyCrowns === 3) {
+    endBattle();
+    return;
+  }
+  
+  requestAnimationFrame(gameLoop);
+}
+
+function endBattle() {
+  battle.ended = true;
+  
+  const won = battle.playerCrowns > battle.enemyCrowns;
+  const draw = battle.playerCrowns === battle.enemyCrowns;
+  
+  state.matches++;
+  let leveledUp = false;
+  
+  if (won) {
+    state.trophies += 10 + battle.playerCrowns * 5;
+  } else if (draw) {
+    state.trophies += 2;
+  } else {
+    state.trophies = Math.max(0, state.trophies - 5);
+  }
+  
+  // Subir nivel de héroes usados (aleatorio de los 5)
+  const randomHero = HEROES[Math.floor(Math.random() * HEROES.length)];
+  state.heroLevels[randomHero.id] = Math.min(14, state.heroLevels[randomHero.id] + 1);
+  
+  // Subir aldea cada 3 partidas
+  if (state.matches % 3 === 0) {
+    state.villageLevel++;
+    leveledUp = true;
+  }
+  
+  save();
+  
+  // Mostrar resultado
+  document.getElementById('battle').classList.remove('active');
+  document.getElementById('result').classList.add('active');
+  
+  const title = document.getElementById('resultTitle');
+  title.textContent = won ? '¡VICTORIA!' : draw ? 'EMPATE' : 'DERROTA';
+  title.className = 'result-title ' + (won ? 'win' : 'lose');
+  
+  document.getElementById('resultInfo').innerHTML = `
+    Coronas: ⭐ ${battle.playerCrowns} - ${battle.enemyCrowns} ⭐<br>
+    Trofeos: ${won ? '+' + (10 + battle.playerCrowns*5) : draw ? '+2' : '-5'}<br>
+    ${randomHero.emoji} ${randomHero.name} subió al nivel ${state.heroLevels[randomHero.id]}
+  `;
+  
+  document.getElementById('levelUpMsg').style.display = leveledUp ? 'block' : 'none';
+  if (leveledUp) {
+    document.getElementById('levelUpMsg').textContent = `¡ALDEA NIVEL ${state.villageLevel}!`;
+  }
+}
+
+function backToMenu() {
+  document.getElementById('result').classList.remove('active');
+  document.getElementById('menu').classList.add('active');
+  updateMenu();
+  battle = null;
+}
+
+// Init
+updateMenu();
+</script>
+
+
+</body></body></html>
